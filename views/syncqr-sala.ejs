@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncQR • Sala <%= args.codigo %> | Afonso Baptista</title>
+
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/css/syncqr-sala.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="icon" type="image/png" sizes="16x16" href="/files/logo-syncqr.png">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <script src="/js/syncqr-sala.js" defer></script>
+
+    <!-- Metatags de SEO e Pré-visualização Social (Discord, Twitter, WhatsApp, LinkedIn) -->
+    <meta name="description" content="Sala <%= args.codigo %> no SyncQR. Entra na sala para sincronizar e abrir QR Codes em tempo real com todo o grupo.">
+
+    <!-- Open Graph (Facebook, Discord, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="SyncQR">
+    <meta property="og:url" content="https://syncqr.afonsobaptista.com/sala/<%= args.codigo %>">
+    <meta property="og:title" content="SyncQR • Sala <%= args.codigo %> 👥⚡">
+    <meta property="og:description" content="Entra na sala colaborativa <%= args.codigo %> para receber e sincronizar leituras de QR Codes em direto.">
+    <meta property="og:image" content="https://syncqr.afonsobaptista.com/files/syncqr-banner.png">
+    <meta property="og:image:secure_url" content="https://syncqr.afonsobaptista.com/files/syncqr-banner.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="675">
+    <meta property="og:image:alt" content="SyncQR - Sala de Transmissão em Direto">
+
+    <!-- Twitter / X Card (Força banner grande no Discord e Twitter) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:domain" content="syncqr.afonsobaptista.com">
+    <meta name="twitter:url" content="https://syncqr.afonsobaptista.com/sala/<%= args.codigo %>">
+    <meta name="twitter:title" content="SyncQR • Sala <%= args.codigo %> 👥⚡">
+    <meta name="twitter:description" content="Entra na sala colaborativa <%= args.codigo %> para receber e sincronizar leituras de QR Codes em direto.">
+    <meta name="twitter:image" content="https://syncqr.afonsobaptista.com/files/syncqr-banner.png">
+
+    <!-- Cor do Tema da Aplicação -->
+    <meta name="theme-color" content="#79DDE1">
+</head>
+
+<body>
+    <%- include('partials/header') %>
+
+    <!-- Ecrã de Bloqueio por Senha (apenas se a sala exigir e ainda não estiver autenticada) -->
+    <div id="modalBloqueioSenha" class="bloqueio-senha-overlay" style="display: <%= args.temSenha ? 'flex' : 'none' %>;">
+        <div class="bloqueio-senha-cartao">
+            <div class="bloqueio-icone-wrap">
+                <span class="material-symbols-outlined icone-cadeado">lock</span>
+            </div>
+            <h2>Sala Protegida</h2>
+            <p>Esta sala requer uma palavra-passe para participar e aceder à sincronização.</p>
+            
+            <div class="input-senha-wrap">
+                <input type="password" id="inputSenhaDesbloqueio" placeholder="Introduz a palavra-passe..." autocomplete="off">
+                <button type="button" id="btnToggleVisivelSenhaDesbloqueio" class="btn-toggle-olho" title="Ver/ocultar palavra-passe">
+                    <span class="material-symbols-outlined">visibility</span>
+                </button>
+            </div>
+            
+            <p id="msgErroDesbloqueio" class="msg-erro-senha"></p>
+            
+            <div class="bloqueio-acoes">
+                <button id="btnDesbloquearSala" class="btn-desbloquear">Desbloquear Sala</button>
+                <a href="/syncqr" class="btn-voltar-link">Voltar ao Início</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal da Sala -->
+    <main class="sync-sala-main">
+        <header class="sala-cabecalho">
+            <h1>Sala: <span id="codigoSala" title="Clica para copiar"><%= args.codigo %></span></h1>
+            
+            <div class="sala-acoes-topo">
+                <button id="btnSairSala" class="btn-sair">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Sair da Sala</span>
+                </button>
+                
+                <label class="toggle-visibilidade-sala" title="Ativar/desativar visibilidade desta sala para utilizadores no mesmo Wi-Fi">
+                    <input type="checkbox" id="chkVisivelRedeSala" <%= (args.visivelNaRede !== false) ? 'checked' : '' %>>
+                    <span class="toggle-slider-mini"></span>
+                    <span class="material-symbols-outlined icone-status-wifi">wifi</span>
+                    <span id="txtStatusVisibilidade"><%= (args.visivelNaRede !== false) ? 'Visível na rede local' : 'Privada (Oculta na rede)' %></span>
+                </label>
+
+                <button id="btnAbrirDefinicoes" class="btn-definicoes" title="Definições da Sala">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Definições</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="sala-layout-grid">
+            <!-- Coluna da Câmara com Suporte a Ecrã Inteiro e Zoom -->
+            <section class="zona-camera" id="zonaCameraContainer">
+                <div class="camera-topo-botoes">
+                    <button id="btnCamera" class="btn-toggle-camera">
+                        <span class="material-symbols-outlined">videocam</span>
+                        <span id="txtBtnCamera">Ativar câmera</span>
+                    </button>
+                    <button id="btnEcraInteiroZoom" class="btn-ecra-inteiro-zoom" style="display: none;" title="Abrir câmara em ecrã inteiro com zoom">
+                        <span class="material-symbols-outlined">zoom_in</span>
+                        <span>Ecrã Inteiro & Zoom</span>
+                    </button>
+                </div>
+
+                <div class="video-container" id="videoContainer">
+                    <video id="video" autoplay playsinline muted></video>
+                    
+                    <!-- Botão flutuante para fechar o modo ecrã inteiro -->
+                    <button id="btnFecharEcraInteiro" class="btn-fechar-ecra-inteiro" title="Sair do ecrã inteiro">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+
+                    <!-- Painel Flutuante de Controlos de Zoom (visível em ecrã inteiro) -->
+                    <div id="painelControlosZoom" class="painel-controlos-zoom">
+                        <button type="button" id="btnZoomMenos" class="btn-zoom-step" title="Diminuir zoom">
+                            <span class="material-symbols-outlined">remove</span>
+                        </button>
+                        <div class="slider-zoom-wrap">
+                            <input type="range" id="sliderZoom" min="1" max="4" step="0.1" value="1">
+                        </div>
+                        <button type="button" id="btnZoomMais" class="btn-zoom-step" title="Aumentar zoom">
+                            <span class="material-symbols-outlined">add</span>
+                        </button>
+                        <div class="presets-zoom">
+                            <button type="button" class="btn-preset-zoom sel" data-zoom="1">1x</button>
+                            <button type="button" class="btn-preset-zoom" data-zoom="2">2x</button>
+                            <button type="button" class="btn-preset-zoom" data-zoom="3">3x</button>
+                        </div>
+                        <span id="badgeZoomNivel" class="badge-zoom">1.0x</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coluna de Informações e Smart Actions -->
+            <section class="dados">
+                <div class="status-barra">
+                    <p id="estadoLigacao"><span class="dot-status">●</span> A ligar...</p>
+                    <p id="numPessoasLigadas">👥 A ligar...</p>
+                </div>
+
+                <!-- Cartão Dinâmico de Smart Actions da Leitura Atual -->
+                <div class="cartao-leitura-atual" id="cartaoLeituraAtual">
+                    <div class="leitura-header-row">
+                        <h3 id="tituloResultadoLeitura">Link Lido</h3>
+                        <span id="badgeTipoConteudo" class="badge-tipo">A aguardar</span>
+                    </div>
+
+                    <!-- Bloco Normal: Link / URL -->
+                    <div id="blocoResultadoLink" class="bloco-resultado-conteudo">
+                        <input type="text" id="inputLinkLido" placeholder="A aguardar leitura de QR Code..." readonly />
+                    </div>
+
+                    <!-- Bloco Smart Action: Rede Wi-Fi -->
+                    <div id="blocoResultadoWifi" class="bloco-resultado-conteudo" style="display: none;">
+                        <div class="wifi-detalhes-grid">
+                            <div class="wifi-campo">
+                                <span class="label">Rede (SSID):</span>
+                                <span id="wifiSsidValor" class="valor-destaque">---</span>
+                            </div>
+                            <div class="wifi-campo">
+                                <span class="label">Segurança:</span>
+                                <span id="wifiSegurancaValor" class="badge-mini-wifi">WPA/WPA2</span>
+                            </div>
+                            <div class="wifi-campo senha-wrap">
+                                <span class="label">Senha:</span>
+                                <input type="password" id="wifiSenhaValor" readonly class="input-wifi-senha">
+                                <button type="button" id="btnToggleVisivelSenhaWifi" class="btn-olho-mini">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloco Smart Action: Contacto (vCard) -->
+                    <div id="blocoResultadoContacto" class="bloco-resultado-conteudo" style="display: none;">
+                        <div class="wifi-detalhes-grid">
+                            <div class="wifi-campo">
+                                <span class="label">Contacto:</span>
+                                <span id="contactoNomeValor" class="valor-destaque">---</span>
+                            </div>
+                            <div class="wifi-campo" id="wrapContactoTel" style="display: none;">
+                                <span class="label">Telefone:</span>
+                                <span id="contactoTelValor" class="valor-destaque">---</span>
+                            </div>
+                            <div class="wifi-campo" id="wrapContactoEmail" style="display: none;">
+                                <span class="label">Email:</span>
+                                <span id="contactoEmailValor" class="valor-destaque">---</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bloco Smart Action: Texto Puro / Notas -->
+                    <div id="blocoResultadoTexto" class="bloco-resultado-conteudo" style="display: none;">
+                        <textarea id="textoLidoArea" rows="3" readonly placeholder="Texto lido do código QR..."></textarea>
+                    </div>
+
+                    <!-- Botões de Ação Contextuais -->
+                    <div class="acoes-leitura-row">
+                        <button id="btnAcaoPrincipal" class="btn-acao-destaque">
+                            <span class="material-symbols-outlined" id="iconeAcaoPrincipal">open_in_new</span>
+                            <span id="txtAcaoPrincipal">Abrir Link</span>
+                        </button>
+                        <button id="btnAcaoSecundaria" class="btn-acao-secundaria">
+                            <span class="material-symbols-outlined" id="iconeAcaoSecundaria">content_copy</span>
+                            <span id="txtAcaoSecundaria">Copiar Link</span>
+                        </button>
+                    </div>
+
+                    <div class="chk-auto-wrap" id="chkAutoAbrirWrapper">
+                        <label>
+                            <input type="checkbox" id="chkAutoAbrir">
+                            <span>Abrir links automaticamente quando lidos</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Painel do Histórico de Leituras da Sessão -->
+                <div class="painel-historico-sessao">
+                    <div class="historico-header">
+                        <div class="historico-titulos">
+                            <h4>📜 Histórico da Sessão</h4>
+                            <span id="badgeContadorHistorico" class="badge-historico">0 itens</span>
+                        </div>
+                        <button id="btnLimparHistorico" class="btn-limpar-historico" title="Limpar histórico desta sessão">
+                            <span class="material-symbols-outlined">delete_sweep</span>
+                            <span>Limpar</span>
+                        </button>
+                    </div>
+                    <div id="listaHistoricoSessao" class="lista-historico-scroll">
+                        <div class="historico-vazio" id="historicoVazioAviso">
+                            <span class="material-symbols-outlined">qr_code_2</span>
+                            <p>Nenhum código lido ainda nesta sessão.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal de Definições com Abas (Layout Dashboard 2 Colunas) -->
+    <div id="modalDefinicoesOverlay" class="modal-overlay">
+        <div class="modal-dashboard-janela">
+            <div class="modal-topo">
+                <div class="modal-titulo-wrap">
+                    <span class="material-symbols-outlined">tune</span>
+                    <h3>Definições da Sala</h3>
+                </div>
+                <button type="button" id="btnFecharModalTopo" class="btn-fechar-modal" title="Fechar">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="modal-dashboard-layout">
+                <!-- Coluna Esquerda: Abas de Navegação -->
+                <nav class="modal-sidebar">
+                    <button type="button" class="tab-btn sel" data-tab="links">
+                        <span class="material-symbols-outlined">link</span>
+                        <div class="tab-textos">
+                            <span class="tab-txt-desktop">Links & Abertura</span>
+                            <span class="tab-txt-mobile">Links</span>
+                            <small class="tab-sub">Comportamento de URLs</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="tab-btn" data-tab="seguranca">
+                        <span class="material-symbols-outlined">lock</span>
+                        <div class="tab-textos">
+                            <span class="tab-txt-desktop">Palavra-Passe</span>
+                            <span class="tab-txt-mobile">Senha</span>
+                            <small class="tab-sub">Proteção da sala</small>
+                        </div>
+                    </button>
+
+                    <button type="button" class="tab-btn" data-tab="feedback">
+                        <span class="material-symbols-outlined">notifications_active</span>
+                        <div class="tab-textos">
+                            <span class="tab-txt-desktop">Feedback Scanner</span>
+                            <span class="tab-txt-mobile">Feedback</span>
+                            <small class="tab-sub">Som, vibração e flash</small>
+                        </div>
+                    </button>
+                </nav>
+
+                <!-- Coluna Direita: Painéis de Conteúdo -->
+                <div class="modal-content-panel">
+                    <!-- Painel 1: Links & Abertura -->
+                    <div class="tab-painel sel" id="painelTabLinks">
+                        <h4>Preferências de Abertura</h4>
+                        <div class="opcao-switch-row">
+                            <label class="switch-wrap">
+                                <input type="checkbox" id="prefAutoAbrirLinks">
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="opcao-info">
+                                <strong>Abrir links automaticamente</strong>
+                                <p>Ao ler um código QR com URL, abre logo um novo separador.</p>
+                            </div>
+                        </div>
+
+                        <div class="opcao-switch-row">
+                            <label class="switch-wrap">
+                                <input type="checkbox" id="prefAutoCopiarLeitura">
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="opcao-info">
+                                <strong>Copiar automaticamente</strong>
+                                <p>Copia o link ou texto imediatamente para a área de transferência.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Painel 2: Palavra-Passe -->
+                    <div class="tab-painel" id="painelTabSeguranca">
+                        <h4>Segurança e Proteção da Sala</h4>
+                        <div class="estado-senha-box">
+                            <span class="material-symbols-outlined" id="iconeStatusSenhaBox">lock_open</span>
+                            <div>
+                                <strong id="txtTituloStatusSenha">Sala Sem Palavra-Passe</strong>
+                                <p id="txtDescricaoStatusSenha">Qualquer pessoa com o código pode entrar e participar.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-senha-sala">
+                            <label for="inputNovaSenhaSala">Definir / Alterar Palavra-Passe:</label>
+                            <div class="input-senha-wrap">
+                                <input type="password" id="inputNovaSenhaSala" placeholder="Digita a nova senha da sala..." autocomplete="off">
+                                <button type="button" id="btnToggleVisivelNovaSenha" class="btn-toggle-olho" title="Ver/ocultar senha">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                </button>
+                            </div>
+                            <div class="botoes-senha-row">
+                                <button type="button" id="btnGuardarSenhaSala" class="btn-guardar-senha">
+                                    <span class="material-symbols-outlined">save</span>
+                                    <span>Guardar Senha</span>
+                                </button>
+                                <button type="button" id="btnRemoverSenhaSala" class="btn-remover-senha" style="display: none;">
+                                    <span class="material-symbols-outlined">lock_reset</span>
+                                    <span>Remover Senha</span>
+                                </button>
+                            </div>
+                            <p id="msgFeedbackSenha" class="msg-feedback-senha"></p>
+                        </div>
+                    </div>
+
+                    <!-- Painel 3: Feedback Scanner -->
+                    <div class="tab-painel" id="painelTabFeedback">
+                        <h4>Sinais de Sucesso ao Ler</h4>
+                        <div class="opcao-switch-row">
+                            <label class="switch-wrap">
+                                <input type="checkbox" id="prefSomBeep" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="opcao-info">
+                                <strong>Sinal Sonoro (Beep)</strong>
+                                <p>Emite um aviso sonoro agradável e subtil quando o QR code é decodificado.</p>
+                            </div>
+                        </div>
+
+                        <div class="opcao-switch-row">
+                            <label class="switch-wrap">
+                                <input type="checkbox" id="prefVibracao" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="opcao-info">
+                                <strong>Vibração Tátil</strong>
+                                <p>Vibra ligeiramente o dispositivo móvel ao concluir a leitura.</p>
+                            </div>
+                        </div>
+
+                        <div class="opcao-switch-row">
+                            <label class="switch-wrap">
+                                <input type="checkbox" id="prefFlashVisual" checked>
+                                <span class="slider-switch"></span>
+                            </label>
+                            <div class="opcao-info">
+                                <strong>Flash Visual Suave</strong>
+                                <p>Pisca subtilmente uma moldura verde em volta da câmara ao ler.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-rodape">
+                <button type="button" id="btnConcluirModal" class="btn-concluir-modal">Concluído</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash Visual Overlay (ativado temporariamente após leitura bem-sucedida) -->
+    <div id="flashVisualFeedback" class="flash-visual-overlay"></div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<link rel="stylesheet" type="text/css" href="/css/header.css">
+<header class="navbar-principal">
+    <div class="nav-container">
+        <a href="/" class="nav-brand">
+            <img class="logo" src="/files/img-marca.png" alt="Afonso Baptista">
+            <div class="brand-text">
+                <span class="brand-name">Afonso Baptista</span>
+                <span class="brand-role">Software Developer</span>
+            </div>
+        </a>
+
+        <!-- Menu Desktop -->
+        <nav class="nav-menu">
+            <a href="https://afonsobaptista.com/" class="op <% if(urlAtual == '/'){ %> sel <% } %>">Início</a>
+            <a href="https://afonsobaptista.com/sobre-mim" class="op <% if(urlAtual == '/sobre-mim'){ %> sel <% } %>">Sobre Mim</a>
+            <a href="https://afonsobaptista.com/projetos" class="op <% if(urlAtual == '/projetos' || (typeof urlAtual === 'string' && urlAtual.startsWith('/projetos/'))){ %> sel <% } %>">Projetos</a>
+            <a href="/syncqr" class="op <% if(typeof urlAtual === 'string' && urlAtual.startsWith('/syncqr')){ %> sel <% } %>">SyncQR <span class="badge-nav">Live</span></a>
+            <a href="https://afonsobaptista.com/contactos" class="op <% if(urlAtual == '/contactos'){ %> sel <% } %>">Contactos</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a href="https://afonsobaptista.com/files/Afonso_Baptista_CV.pdf" target="_blank" class="btn-cv-header" title="Ver Currículo">
+                <span class="material-symbols-outlined">visibility</span> Ver CV
+            </a>
+            <a href="https://afonsobaptista.com/contactos" class="btn-nav-cta">
+                <span class="status-dot"></span> Contactar
+            </a>
+        </div>
+
+        <!-- Botão Hambúrguer Mobile -->
+        <button class="nav-hamburger" id="navHamburger" aria-label="Abrir Menu">
+            <span class="material-symbols-outlined" id="navHamburgerIcon">menu</span>
+        </button>
+    </div>
+
+    <!-- Menu Mobile em Tela Cheia -->
+    <div class="nav-mobile-overlay" id="navMobileOverlay">
+        <nav class="nav-mobile-links">
+            <a href="https://afonsobaptista.com/" class="mobile-op <% if(urlAtual == '/'){ %> sel <% } %>">
+                <span class="material-symbols-outlined">home</span>
+                <span>Início</span>
+            </a>
+            <a href="https://afonsobaptista.com/sobre-mim" class="mobile-op <% if(urlAtual == '/sobre-mim'){ %> sel <% } %>">
+                <span class="material-symbols-outlined">person</span>
+                <span>Sobre Mim</span>
+            </a>
+            <a href="https://afonsobaptista.com/projetos" class="mobile-op <% if(urlAtual == '/projetos' || (typeof urlAtual === 'string' && urlAtual.startsWith('/projetos/'))){ %> sel <% } %>">
+                <span class="material-symbols-outlined">code_blocks</span>
+                <span>Projetos</span>
+            </a>
+            <a href="/syncqr" class="mobile-op <% if(typeof urlAtual === 'string' && urlAtual.startsWith('/syncqr')){ %> sel <% } %>">
+                <span class="material-symbols-outlined">qr_code_scanner</span>
+                <span>SyncQR</span>
+                <span class="badge-nav">Live</span>
+            </a>
+            <a href="https://afonsobaptista.com/contactos" class="mobile-op <% if(urlAtual == '/contactos'){ %> sel <% } %>">
+                <span class="material-symbols-outlined">mail</span>
+                <span>Contactos</span>
+            </a>
+        </nav>
+
+        <div class="mobile-actions">
+            <a href="https://afonsobaptista.com/files/Afonso_Baptista_CV.pdf" target="_blank" class="btn-mobile-cv">
+                <span class="material-symbols-outlined">visibility</span> Ver Currículo (PDF)
+            </a>
+            <a href="https://afonsobaptista.com/contactos" class="btn-mobile-cta">
+                <span class="status-dot"></span> Contactar
+            </a>
+        </div>
+    </div>
+</header>
+
+<script>
+    (function() {
+        const hamburger = document.getElementById('navHamburger');
+        const overlay = document.getElementById('navMobileOverlay');
+        const icon = document.getElementById('navHamburgerIcon');
+
+        if (hamburger && overlay && icon) {
+            hamburger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const isOpen = overlay.classList.toggle('is-active');
+                hamburger.classList.toggle('is-active', isOpen);
+                icon.textContent = isOpen ? 'close' : 'menu';
+                document.body.style.overflow = isOpen ? 'hidden' : '';
+            });
+
+            // Fecha menu ao clicar em qualquer link
+            overlay.querySelectorAll('a').forEach(function(link) {
+                link.addEventListener('click', function() {
+                    overlay.classList.remove('is-active');
+                    hamburger.classList.remove('is-active');
+                    icon.textContent = 'menu';
+                    document.body.style.overflow = '';
+                });
+            });
+        }
+    })();
+</script>

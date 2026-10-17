@@ -1,0 +1,14 @@
+services:
+  syncqr:
+    build: .
+    container_name: syncqr
+    restart: always
+    ports:
+      - "127.0.0.1:8008:3000"
+    environment:
+      - PORT=3000
+    volumes:
+      - ./data:/usr/src/app/data
+      - ./views:/usr/src/app/views
+      - ./public:/usr/src/app/public
+      - ./server.js:/usr/src/app/server.js

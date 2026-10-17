@@ -1,0 +1,575 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+body {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Secção Hero com luz ambiente radial centrada atrás do título */
+.syncqr-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 70px 20px 25px;
+    box-sizing: border-box;
+    position: relative;
+    background: radial-gradient(circle 500px at 50% 35%, rgba(56, 189, 248, 0.15) 0%, rgba(121, 221, 225, 0.05) 45%, transparent 75%), #000000;
+}
+
+/* Título: SyncQR */
+.syncqr-title,
+h1 {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: clamp(38px, 4.5vw, 54px);
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin: 0 0 20px 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* O gradiente ciano / azul claro nas letras "QR" */
+.syncqr-title span,
+h1 span {
+    background: linear-gradient(180deg, #9fe9f7 0%, #38bdf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-left: 1px;
+}
+
+/* Slogan: Um scan. Todos ligados */
+.syncqr-slogan,
+h2 {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: clamp(36px, 5.5vw, 68px);
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.035em;
+    line-height: 1.15;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Container de Conteúdo Lado a Lado (Alinhamento Vertical Perfeito) */
+.syncqr-content-wrapper,
+div[style*="display: flex"] {
+    display: flex;
+    align-items: center; /* Alinha o bloco da esquerda e o cartão da direita rigorosamente ao centro */
+    justify-content: center;
+    gap: 45px;
+    max-width: 1050px;
+    width: 90%;
+    margin: 20px auto 70px;
+    box-sizing: border-box;
+}
+
+/* Informações / Descrição do serviço */
+.sync-inf {
+    max-width: 520px;
+    margin: 0 auto 35px;
+    text-align: center;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+.syncqr-content-wrapper .sync-inf,
+div[style*="display: flex"] > .sync-inf {
+    margin: 0;
+    flex: 1;
+}
+
+/* Texto descritivo principal */
+.sync-inf > p:first-of-type {
+    color: #94a3b8;
+    font-size: 17px;
+    line-height: 1.6;
+    margin: 0 auto 28px;
+    max-width: 560px;
+}
+
+/* Título: 3 passos Simples */
+.sync-inf h3 {
+    color: #ffffff;
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Ponto ciano de destaque antes do título */
+.sync-inf h3::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #79DDE1;
+    box-shadow: 0 0 10px #79DDE1;
+}
+
+/* Caixa com a lista dos 3 passos */
+.sync-inf > p:last-of-type {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 16px 26px;
+    border-radius: 14px;
+    color: #e2e8f0;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 2.1;
+    text-align: left;
+    margin: 0 auto;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.sync-inf > p:last-of-type:hover {
+    border-color: rgba(121, 221, 225, 0.25);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.1);
+}
+
+/* Caixa de Conexão à Sala (Entrada de Código) */
+.suncqr-connect,
+.syncqr-connect {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    padding: 22px 24px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(56, 189, 248, 0.08);
+    margin: 20px auto 60px;
+    max-width: 480px;
+    width: 90%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.syncqr-content-wrapper .syncqr-connect,
+.syncqr-content-wrapper .suncqr-connect,
+div[style*="display: flex"] > .syncqr-connect,
+div[style*="display: flex"] > .suncqr-connect {
+    margin: 0;
+    flex: 1;
+}
+
+.suncqr-connect:hover,
+.syncqr-connect:hover {
+    border-color: rgba(121, 221, 225, 0.25);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 30px rgba(56, 189, 248, 0.12);
+}
+
+/* Linha do Rótulo "Código Sala:" e Mensagem de Erro */
+.syncqr-label-row {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 2px;
+}
+
+.syncqr-label-row p:first-of-type {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #cbd5e1;
+    letter-spacing: 0.02em;
+    text-align: left;
+}
+
+/* Mensagem de Erro / Informação Dinâmica */
+#infError {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #f87171;
+    text-shadow: 0 0 10px rgba(248, 113, 113, 0.4);
+    letter-spacing: 0.01em;
+    text-align: right;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+/* Campo de Input */
+.suncqr-connect input,
+.syncqr-connect input {
+    grid-column: 1;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    outline: none;
+    box-sizing: border-box;
+    width: 100%;
+    transition: all 0.25s ease;
+}
+
+.suncqr-connect input:focus,
+.syncqr-connect input:focus {
+    border-color: #38bdf8;
+    background: rgba(255, 255, 255, 0.09);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+}
+
+.suncqr-connect input::placeholder,
+.syncqr-connect input::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: none;
+    letter-spacing: normal;
+}
+
+/* Botão "Entrar" */
+.suncqr-connect button,
+.syncqr-connect button {
+    grid-column: 2;
+    background: linear-gradient(135deg, #79DDE1 0%, #38bdf8 100%);
+    color: #030712;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 26px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    white-space: nowrap;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+}
+
+.suncqr-connect button:hover,
+.syncqr-connect button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(56, 189, 248, 0.5);
+    filter: brightness(1.08);
+}
+
+.suncqr-connect button:active,
+.syncqr-connect button:active {
+    transform: translateY(0);
+}
+
+/* Botão secundário de alto destaque: Criar nova sala */
+.suncqr-connect a,
+.syncqr-connect a {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: #79DDE1;
+    background: rgba(121, 221, 225, 0.08);
+    border: 1px solid rgba(121, 221, 225, 0.28);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    margin-top: 6px;
+    box-sizing: border-box;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 15px rgba(121, 221, 225, 0.06);
+}
+
+.suncqr-connect a:hover,
+.syncqr-connect a:hover {
+    background: rgba(121, 221, 225, 0.18);
+    border-color: #79DDE1;
+    color: #ffffff;
+    box-shadow: 0 0 25px rgba(121, 221, 225, 0.35);
+    transform: translateY(-1.5px);
+}
+
+.suncqr-connect a:active,
+.syncqr-connect a:active {
+    transform: translateY(0);
+}
+
+/* Responsivo: transição para coluna em ecrãs médios e pequenos */
+@media (max-width: 900px) {
+    .syncqr-content-wrapper,
+    div[style*="display: flex"] {
+        flex-direction: column;
+        align-items: center;
+        gap: 36px;
+        margin: 10px auto 50px;
+    }
+
+    .syncqr-content-wrapper .sync-inf,
+    div[style*="display: flex"] > .sync-inf,
+    .syncqr-content-wrapper .syncqr-connect,
+    div[style*="display: flex"] > .syncqr-connect {
+        max-width: 100%;
+        width: 100%;
+    }
+}
+
+/* Disposição vertical completa (stack) em telemóveis */
+@media (max-width: 580px) {
+    .suncqr-connect,
+    .syncqr-connect {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 20px 18px;
+    }
+
+    .suncqr-connect input,
+    .syncqr-connect input,
+    .suncqr-connect button,
+    .syncqr-connect button {
+        grid-column: 1 / -1;
+    }
+
+    .suncqr-connect p,
+    .syncqr-connect p {
+        text-align: left;
+    }
+
+    .suncqr-connect input,
+    .syncqr-connect input {
+        width: 100%;
+        text-align: center;
+    }
+
+    .suncqr-connect button,
+    .syncqr-connect button {
+        width: 100%;
+    }
+
+    .suncqr-connect a,
+    .syncqr-connect a {
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   Salas Visíveis na Rede Local / Wi-Fi
+   ========================================================================== */
+.salas-locais-container {
+    grid-column: 1 / -1;
+    width: 100%;
+    margin-bottom: 24px;
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: 14px;
+    padding: 16px;
+    box-sizing: border-box;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08);
+    animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.salas-locais-topo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.icone-wifi-radar {
+    font-size: 26px;
+    color: #10B981;
+    background: rgba(16, 185, 129, 0.15);
+    padding: 6px;
+    border-radius: 10px;
+    animation: radarPulse 2s infinite ease-in-out;
+}
+
+@keyframes radarPulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+    }
+}
+
+.salas-locais-titulos {
+    flex: 1;
+    text-align: left;
+}
+
+.salas-locais-titulos h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+}
+
+.salas-locais-titulos p {
+    margin: 2px 0 0 0;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.badge-radar {
+    font-size: 11px;
+    font-weight: 700;
+    color: #10B981;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.lista-salas-locais {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.cartao-sala-local {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cartao-sala-local:hover {
+    background: rgba(121, 221, 225, 0.08);
+    border-color: rgba(121, 221, 225, 0.35);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.info-sala-local {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.codigo-sala-local {
+    font-family: 'Inter', monospace;
+    font-size: 16px;
+    font-weight: 800;
+    color: #79DDE1;
+    letter-spacing: 2px;
+    background: rgba(121, 221, 225, 0.1);
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.membros-sala-local {
+    font-size: 13px;
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+.btn-entrar-direto {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cartao-sala-local:hover .btn-entrar-direto {
+    background: linear-gradient(135deg, #34d399 0%, #10B981 100%);
+    transform: translateX(2px);
+}
+
+.icone-seta {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+.cartao-sala-local:hover .icone-seta {
+    transform: translateX(3px);
+}
+
+/* Opção ao criar nova sala */
+.opcao-visibilidade-criar {
+    margin-top: 14px;
+    width: 100%;
+}
+
+.label-toggle-rede {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #94a3b8;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+.label-toggle-rede:hover {
+    color: #ffffff;
+}
+
+.label-toggle-rede input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #10B981;
+    cursor: pointer;
+    margin: 0;
+}
+
+.texto-toggle-rede {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.icone-mini-wifi {
+    font-size: 16px;
+    color: #10B981;
+}
