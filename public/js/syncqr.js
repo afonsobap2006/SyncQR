@@ -93,18 +93,22 @@ function renderizarSalasLocais(salas) {
     badgeSalasLocais.innerText = `${salas.length} sala${salas.length === 1 ? '' : 's'}`;
   }
 
-  listaSalasLocais.innerHTML = salas.map(s => `
-    <div class="cartao-sala-local" onclick="window.location.href='/syncqr/sala/${s.codigo}'">
+  listaSalasLocais.innerHTML = salas.map(s => {
+    const safeCodigo = String(s.codigo || "").replace(/[^a-zA-Z0-9]/g, "");
+    const rota = (window.location.pathname.startsWith("/syncqr") ? "/syncqr/sala/" : "/sala/") + encodeURIComponent(safeCodigo);
+    return `
+    <div class="cartao-sala-local" onclick="window.location.href='${rota}'">
       <div class="info-sala-local">
-        <span class="codigo-sala-local">${s.codigo}</span>
-        <span class="membros-sala-local">👥 ${s.totalPessoas} ligado${s.totalPessoas === 1 ? '' : 's'}</span>
+        <span class="codigo-sala-local">${safeCodigo}</span>
+        <span class="membros-sala-local">👥 ${Number(s.totalPessoas) || 0} ligado${s.totalPessoas === 1 ? "" : "s"}</span>
       </div>
       <button class="btn-entrar-direto" title="Entrar de imediato sem código manual">
         <span>Entrar</span>
         <span class="material-symbols-outlined icone-seta">arrow_forward</span>
       </button>
     </div>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // Inicia deteção imediata e faz polling a cada 5 segundos

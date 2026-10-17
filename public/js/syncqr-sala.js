@@ -612,6 +612,16 @@ function obterUltimoCodigoHistorico() {
   return historicoSessaoCodigos[historicoSessaoCodigos.length - 1];
 }
 
+function escapeHtml(str) {
+  if (!str) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 function adicionarAoHistorico(dados, hora) {
   historicoSessao.unshift({ dados, hora });
   historicoSessaoCodigos.push(dados.raw);
@@ -635,13 +645,18 @@ function adicionarAoHistorico(dados, hora) {
     conteudoTexto = dados.texto;
   }
 
+  const safeBadge = escapeHtml(badgeTexto);
+  const safeHora = escapeHtml(hora);
+  const safeConteudo = escapeHtml(conteudoTexto);
+  const safeRaw = escapeHtml(dados.raw || "");
+
   itemElemento.innerHTML = `
     <div class="item-historico-info">
       <div class="item-historico-topo">
-        <span class="badge-item-tipo">${badgeTexto}</span>
-        <span class="hora-item">${hora}</span>
+        <span class="badge-item-tipo">${safeBadge}</span>
+        <span class="hora-item">${safeHora}</span>
       </div>
-      <span class="conteudo-item-texto" title="${dados.raw}">${conteudoTexto}</span>
+      <span class="conteudo-item-texto" title="${safeRaw}">${safeConteudo}</span>
     </div>
     <div class="item-historico-botoes">
       ${dados.tipo === 'link' ? `<button class="btn-item-acao btn-abrir-hist" title="Abrir"><span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span></button>` : ''}

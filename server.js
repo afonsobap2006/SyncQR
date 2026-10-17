@@ -307,14 +307,15 @@ function configurarSyncQR(targetApp, targetIo, options = {}) {
             });
 
             socket.on('enviar-link', ({ codigoSala, link }) => {
-                if (!codigoSala || !link) return;
+                if (!codigoSala || !link || typeof link !== 'string' || link.length > 50000) return;
 
                 const info = {
                     link: link,
                     hora: new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
                 };
 
-                console.log(`📡 Novo link recebido na sala [${codigoSala}]: ${link}`);
+                const linkLog = link.length > 120 ? link.substring(0, 120) + "..." : link;
+                console.log(`📡 Novo link recebido na sala [${codigoSala}]: ${linkLog}`);
                 targetIo.to(codigoSala).emit('receber-link', info);
             });
 
